@@ -197,7 +197,9 @@ class EdgeSchemaSourceGenerator(codegen.SourceGenerator):
             self.write('abstract ')
         self._visit_Declaration(node)
 
-    def visit_LinkPropertyDeclaration(self, node):
+    def visit_PropertyDeclaration(self, node):
+        if node.abstract:
+            self.write('abstract ')
         self._visit_Declaration(node)
 
     def visit_ViewDeclaration(self, node):
@@ -251,6 +253,11 @@ class EdgeSchemaSourceGenerator(codegen.SourceGenerator):
             self.write('>')
 
     def visit_Link(self, node):
+        if node.required:
+            self.write('required ')
+        self._visit_Pointer(node)
+
+    def visit_Property(self, node):
         if node.required:
             self.write('required ')
         self._visit_Pointer(node)

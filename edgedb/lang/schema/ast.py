@@ -41,6 +41,10 @@ class Constraint(Base):
     subject: typing.Optional[qlast.Expr]
 
 
+class Policy(Base):
+    __fields = ['event', 'action']  # TODO: type this
+
+
 class Pointer(Base):
     name: qlast.ObjectRef
 
@@ -49,6 +53,12 @@ class Pointer(Base):
 
     attributes: typing.List[Attribute]
     constraints: typing.List[Constraint]
+    policies: typing.List[Policy]
+
+    required: bool = False
+
+    # Expression of a computable link
+    expr: qlast.Base = None
 
 
 class Index(Base):
@@ -56,23 +66,17 @@ class Index(Base):
     expression: qlast.Base
 
 
-class Policy(Base):
-    __fields = ['event', 'action']  # TODO: type this
-
-
-class LinkProperty(Pointer):
-    # Expression of a computable link property
-    expr: qlast.Base = None
+class Property(Pointer):
+    pass
 
 
 class Link(Pointer):
-    required: bool = False
+    properties: typing.List[Property]
 
-    # Expression of a computable link
-    expr: qlast.Base = None
 
-    policies: typing.List[Policy]
-    properties: typing.List[LinkProperty]
+# # XXX: to be killed
+# class LinkProperty(Property):
+#     pass
 
 
 class Declaration(Base):
@@ -99,6 +103,7 @@ class ObjectTypeDeclaration(Declaration):
     abstract: bool = False
     final: bool = False
     links: typing.List[Link]
+    properties: typing.List[Property]
     indexes: typing.List[Index]
     constraints: typing.List[Constraint]
 
@@ -137,16 +142,19 @@ class FunctionDeclaration(Declaration):
     set_returning: str = ''
 
 
-class LinkDeclaration(Declaration):
+class BasePointerDeclaration(Declaration):
     abstract: bool = False
-    properties: typing.List[LinkProperty]
     indexes: typing.List[Index]
     constraints: typing.List[Constraint]
     policies: typing.List[Policy]
 
 
-class LinkPropertyDeclaration(Declaration):
-    policies: typing.List[Policy]
+class PropertyDeclaration(BasePointerDeclaration):
+    pass
+
+
+class LinkDeclaration(BasePointerDeclaration):
+    properties: typing.List[Property]
 
 
 class Import(Base):

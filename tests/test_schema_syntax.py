@@ -56,7 +56,7 @@ abstract type OwnedObject:
     def test_eschema_syntax_type_03(self):
         """
         abstract type Text:
-            required link body -> str:
+            required property body -> str:
                 constraint maxlength (10000)
         """
 
@@ -117,7 +117,7 @@ type Issue extending `foo.bar`::NamedObject, OwnedObject, Text:
         """
 type Foo:
     link time_estimate -> int:
-       link property unit:
+       property unit:
            default := 'minute'
        """
 
@@ -181,7 +181,7 @@ type LogEntry extending OwnedObject, Text:
     def test_eschema_syntax_index_02(self):
         """
 link foobar:
-    link property foo:
+    property foo:
         title := 'Sample property'
 
     index prop on (self@foo)
@@ -486,29 +486,29 @@ constraint foo($param:Foo) on (len(__subject__.bar)) extending max:
     errmessage := 'bar must be no more than {$param}.'
         """
 
-    def test_eschema_syntax_linkproperty_01(self):
+    def test_eschema_syntax_property_01(self):
         """
-link property foo:
+property foo:
     title := 'Sample property'
         """
 
-    def test_eschema_syntax_linkproperty_02(self):
+    def test_eschema_syntax_property_02(self):
         """
-link property bar extending foo
+property bar extending foo
         """
 
-    def test_eschema_syntax_linkproperty_03(self):
+    def test_eschema_syntax_property_03(self):
         """
-link property bar extending foo:
+property bar extending foo:
     title := 'Another property'
         """
 
-    def test_eschema_syntax_linkproperty_04(self):
+    def test_eschema_syntax_property_04(self):
         """
-link property foo:
+property foo:
     title := 'Sample property'
 
-link property bar extending foo:
+property bar extending foo:
     title := 'Another property'
         """
 
@@ -547,14 +547,14 @@ link coollink extending boringlink
     def test_eschema_syntax_link_03(self):
         """
 link coollink:
-    link property foo -> int
+    property foo -> int
         """
 
     def test_eschema_syntax_link_04(self):
         """
 link coollink:
-    link property foo -> int
-    link property bar -> int
+    property foo -> int
+    property bar -> int
 
     constraint expr:
         expr := self.foo = self.bar
@@ -562,21 +562,21 @@ link coollink:
 
     def test_eschema_syntax_link_05(self):
         """
-link property foo:
+property foo:
     title := 'Sample property'
 
-link property bar extending foo:
+property bar extending foo:
     title := 'Another property'
 
 link coollink:
-    link property foo -> int:
+    property foo -> int:
         default := 2
         constraint min(0)
         constraint max(123456)
         constraint expr on (__subject__ % 2 = 0):
             title := 'aaa'
 
-    link property bar -> int
+    property bar -> int
 
     constraint expr on (self.foo = self.bar)
 
@@ -591,37 +591,37 @@ event self_deleted:
         """
 
     @tb.must_fail(error.SchemaSyntaxError,
-                  r'Unexpected token.*LINKPROPERTY', line=3, col=22)
+                  r'Link properties cannot be "required".', line=3, col=13)
     def test_eschema_syntax_link_06(self):
         """
         link coollink:
-            required link property foo -> int
+            required property foo -> int
         """
 
     def test_eschema_syntax_link_07(self):
         """
         link time_estimate:
-           link property unit -> str:
+           property unit -> str:
                constraint my_constraint(0)
         """
 
     def test_eschema_syntax_link_08(self):
         """
         link time_estimate:
-           link property unit -> str:
+           property unit -> str:
                constraint my_constraint(0, <str>(42^2))
         """
 
     def test_eschema_syntax_link_09(self):
         """
         link time_estimate:
-           link property unit -> str:
+           property unit -> str:
                constraint my_constraint(')', `)`($$)$$))
 
 % OK %
 
         link time_estimate:
-           link property unit -> str:
+           property unit -> str:
                constraint my_constraint(')', `)`(')'))
         """
 
